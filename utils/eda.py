@@ -4,6 +4,9 @@ import seaborn as sns
 import numpy as np
 from typing import Optional, List
 
+from scipy.conftest import xp_available_backends
+
+
 def missing_values(df: pd.DataFrame) -> pd.DataFrame:
     length = df.shape[0]
     missing_values_count = df.isnull().sum()
@@ -111,6 +114,33 @@ None, nrows: int = 1, ncols: int = 1) -> None:
     plt.tight_layout()
     plt.show()
 
+
+def percentage_plots(data: pd.DataFrame, columns: List[str], title: Optional[
+    str] = None, ax=None) -> None:
+
+    df_len = data.shape[0]
+    if ax is None:
+        ax = plt.gca()
+
+    sns.countplot(data=data, y=columns, ax=ax, orient='h')  #
+    # Horizontal plot
+    for p in ax.patches:
+        percentage = round((p.get_width() * 100 / df_len), 2)
+        (ax
+            .annotate(f'{percentage}%',
+                   (p.get_width(), p.get_y() + p.get_height() / 2.),
+                   ha='center', va='center', xytext=(10, 0),
+                   textcoords='offset points'))
+    sns.despine(top=True, right=True, left=True, bottom=True)
+    ax.tick_params(axis='y', which='both', length=0, labelleft=True)
+    ax.tick_params(axis='x', which='both', length=0, labelbottom=False)
+    ax.set(ylabel=None, xlabel=None)
+
+    if title:
+        ax.set_title(title)
+
+    plt.show()
+
 def percentage_subplots(data: pd.DataFrame, columns: List[str], title: Optional[
     str] = None, nrows: int = 1, ncols: int = 1) -> None:
 
@@ -129,7 +159,8 @@ def percentage_subplots(data: pd.DataFrame, columns: List[str], title: Optional[
     axes_len = len(axes_flatten)
 
     for i, col in enumerate(columns):
-        sns.countplot(data=data, y=col, ax=axes_flatten[i], orient='h')  # Horizontal plot
+        order = data[col].value_counts().sort_values(ascending=False).index
+        sns.countplot(data=data, y=col, ax=axes_flatten[i], orient='h', order=order)  # Horizontal plot
         axes_flatten[i].set_title(col, pad=15)
         for p in axes_flatten[i].patches:
             percentage = round((p.get_width() * 100 / df_len), 2)
