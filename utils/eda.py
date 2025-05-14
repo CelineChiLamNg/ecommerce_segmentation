@@ -4,8 +4,6 @@ import seaborn as sns
 import numpy as np
 from typing import Optional, List
 
-from scipy.conftest import xp_available_backends
-
 
 def missing_values(df: pd.DataFrame) -> pd.DataFrame:
     length = df.shape[0]
