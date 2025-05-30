@@ -186,7 +186,8 @@ def percentage_subplots(data: pd.DataFrame, columns: List[str], title: Optional[
 def stacked_bar_plot(df: pd.DataFrame, col: str, hue: str,
                      color: Optional[List[str]] = None,
                      title: Optional[str] = None, xlabel: Optional[str] = None,
-                     ylabel: Optional[str] = None) -> None:
+                     ylabel: Optional[str] = None, ax: Optional[plt.Axes] =
+                     None) -> None:
     """
     Plots a stacked bar chart with the given DataFrame and column,
     with stack segments defined by hue.
@@ -207,24 +208,80 @@ def stacked_bar_plot(df: pd.DataFrame, col: str, hue: str,
     if color is None:
         color = sns.color_palette('dark', n_colors=len(hues))
 
-    fig, ax = plt.subplots()
+    if ax is None:
+        fig, ax = plt.subplots()
 
     bottom = np.zeros(len(categories))
 
     for idx, h in enumerate(hues):
-        group_data = df[df[hue] == h].groupby(col).size().reindex(categories,
-                                                                  fill_value=0)
-        plt.bar(categories, group_data, bottom=bottom, color=color[idx],
-                label=h)
+        group_data = df[df[hue] == h].groupby(col).size().reindex(categories, fill_value=0)
+        ax.bar(categories, group_data, bottom=bottom, color=color[idx], label=h)
         bottom += group_data.values
 
-    plt.xlabel(xlabel if xlabel else col)
-    plt.ylabel(ylabel if ylabel else 'Count')
-    plt.title(title if title else f'{col} Counts by {hue}')
-    plt.legend(title=hue)
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.set_xlabel(xlabel if xlabel else col)
+    ax.set_ylabel(ylabel if ylabel else 'Count')
+    ax.set_title(title if title else f'{col} Counts by {hue}')
+    ax.legend(title=hue, loc='center left', bbox_to_anchor=(1, 0.5))
 
     plt.show()
+
+def stacked_bar_by_segment(data: pd.DataFrame, col: List[str], segment_col:
+str = 'Segment', ax=None, title: Optional[str] = None, palette: Optional[
+    dict[str, str]] = None) -> None:
+
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    ct = pd.crosstab(data[segment_col], data[col], normalize='index') * 100
+    ct = ct.sort_index()  # Ensure segments are in consistent order
+
+        # Plot stacked horizontal bars
+    left = np.zeros(len(ct))
+    for i, category in enumerate(ct.columns):
+        color = palette.get(category, None) if palette else None
+        ax.barh(ct.index, ct[category], left=left, label=category, color=color)
+        left += ct[category]
+
+    ax.set_title(title if title else 'Distribution of Responses by Segment')
+    ax.set_xlabel('Percentage')
+    ax.set_ylabel('Segment')
+    ax.set_xlim(0, 100)
+    plt.show()
+
+from typing import Optional, Dict
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+def stacked_bar_by_segment(data: pd.DataFrame, feature: str, segment_col: str = 'Segment',
+                           figsize: tuple = (8, 5), ax=None, title:
+        Optional[str] = None, palette: Optional[Dict[str, str]] = None) -> None:
+    """
+    Plots a horizontal stacked bar chart for one categorical feature,
+    showing the distribution of responses by segment.
+    """
+    # Prepare the normalized crosstab
+    ct = pd.crosstab(data[segment_col], data[feature], normalize='index') * 100
+    ct = ct.sort_index()
+
+    # Set up the plot
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    left = np.zeros(len(ct))
+
+    for category in ct.columns:
+        color = palette.get(category) if palette else None
+        ax.barh(ct.index, ct[category], left=left, label=category, color=color)
+        left += ct[category]
+
+    ax.set_xlabel('Percentage')
+    ax.set_ylabel(segment_col)
+    ax.set_xlim(0, 100)
+    ax.set_title(title if title else f'Distribution of {feature} by {segment_col}')
+    ax.legend(title=feature, bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
+    plt.show()
+
 
 
 def stacked_horizontal_feature_distribution(data: pd.DataFrame, columns:
