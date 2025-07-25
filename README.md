@@ -26,9 +26,14 @@ customer satisfaction, and more.
 3. Matplotlib
 4. Seaborn
 5. Google Sheets
+6. PowerBI
 
 
 ## Results
+
+RFM analysis in [Google Sheets](https://docs.google.com/spreadsheets/d/1XJ93vgaaLXZJuY4I7Avh4-zQIvFcPu0qcsWSmEUVSsU/edit?usp=sharing)
+PowerBI dashboard in [pdf](https://drive.google.com/file/d/1B4mSj_4IcPPq9nLoHhVHgDqbzOUf4kAE/view?usp=sharing)
+
 After RFM, 26% of customers are Top, Solid, and Regular customer combined, and 
 20% are 
 customers
