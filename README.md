@@ -33,7 +33,7 @@ customer satisfaction, and more.
 
 RFM analysis in [Google Sheets](https://docs.google.com/spreadsheets/d/1XJ93vgaaLXZJuY4I7Avh4-zQIvFcPu0qcsWSmEUVSsU/edit?usp=sharing)
 </br>PowerBI dashboard in [pdf](https://drive.google.com/file/d/1B4mSj_4IcPPq9nLoHhVHgDqbzOUf4kAE/view?usp=sharing)
-</br>
+</br></br>
 After RFM, 26% of customers are Top, Solid, and Regular customer combined, and 
 20% are 
 customers
